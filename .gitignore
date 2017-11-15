@@ -69,3 +69,7 @@ target/
 
 # pyenv python configuration file
 .python-version
+
+# jupyter
+notebooks/
+*.ipynb
