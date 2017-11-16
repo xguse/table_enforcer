@@ -9,22 +9,23 @@ import pandas as pd
 
 from munch import Munch
 # import table_enforcer.errors as e
-from .validate import validators as v
-from .validate import decorators as vdec
+from table_enforcer import validate as v
+
+__all__ = ["Enforcer", "Column"]
 
 VALIDATOR_FUNCTION = t.Callable[[pd.Series], pd.DataFrame]
 RECODER_FUNCTION = t.Callable[[pd.Series], pd.Series]
 
 
 class Enforcer(object):
-    """Base class to define table definitions."""
+    """Class to define table definitions."""
 
-    def __init__(self, *args):
+    def __init__(self, columns):
         """Initialize an enforcer instance."""
         self._columns = OrderedDict()
 
-        for arg in args:
-            self._columns[arg.name] = arg
+        for column in columns:
+            self._columns[column.name] = column
 
         self.columns = list(self._columns.keys())
 
@@ -39,8 +40,11 @@ class Enforcer(object):
 
         return results
 
-    def validate(self, table: pd.DataFrame) -> bool:
+    def validate(self, table: pd.DataFrame, recode: bool=False) -> bool:
         """Return True if all validation tests pass: False otherwise."""
+        if recode:
+            table = self.recode(table)
+
         validations = self.make_validations(table=table)
 
         results = [df.all().all() for df in validations.values()]
@@ -67,28 +71,42 @@ class Column(object):
                  validators: t.List[VALIDATOR_FUNCTION],
                  recoders: t.List[RECODER_FUNCTION]) -> None:
         """Construct a new `Column` object."""
+        if validators is None:
+            validators = []
+        if recoders is None:
+            recoders = []
         self.name = name
         self.dtype = dtype
         self.unique = unique
-        self.validators = self._series_of_funcs(validators)
-        self.recoders = self._series_of_funcs(recoders)
+        self.validators = self._dict_of_funcs(validators)
+        self.recoders = self._dict_of_funcs(recoders)
 
-    def _series_of_funcs(self, funcs: list) -> pd.Series:
+    def _dict_of_funcs(self, funcs: list) -> pd.Series:
         """Return a pd.Series of functions with index derived from the function name."""
-        return pd.Series({func.__name__: func for func in funcs})
+        return {func.__name__: func for func in funcs}
 
     def _validate_series_dtype(self, series: pd.Series) -> pd.Series:
         """Validate that the series data is the correct dtype."""
         return series.apply(lambda i: isinstance(i, self.dtype))
 
-    def validate(self, table: pd.DataFrame) -> pd.DataFrame:
+    def validate(self, table: pd.DataFrame, recode: bool=False) -> pd.DataFrame:
         """Return a dataframe of validation results for the correct column in table vs the vector of validators."""
         col = self.name
-        series = table[col]
-        results = series.apply(lambda x: self.validators.apply(lambda f: f(x)))
+        validators = self.validators
+
+        if recode:
+            series = self.recode(table)
+        else:
+            series = table[col]
+
+        results = pd.DataFrame({validator: series for validator in validators})
+
+        for name, func in validators.items():
+            results[name] = func(results[name])
+
         results['dtype'] = self._validate_series_dtype(series)
         if self.unique:
-            results['unique'] = v.unique(series)
+            results['unique'] = v.funcs.unique(series)
 
         return results
 
@@ -98,7 +116,7 @@ class Column(object):
         series = table[col]
 
         data = series.copy()
-        for recoder in dict(self.recoders).values():
+        for recoder in self.recoders.values():
             data = recoder(data)
 
         return data
