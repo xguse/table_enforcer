@@ -33,6 +33,12 @@ Features
   * Decorators for use in defining parameterized validators like ``between_4_and_60()``.
   * Declaration syntax for ``Enforcer`` is based on SqlAlchemy's `Table <http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table>`_ pattern.
 
+
+Demo Usage
+----------
+
+For now please take a look at this `Demo Notebook <https://github.com/xguse/table_enforcer/blob/develop/docs/demo_notebook/Usage_Demo.ipynb>`_
+
 Credits
 ---------
 
