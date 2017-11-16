@@ -1,5 +1,5 @@
 Welcome to Table Enforcer's documentation!
-======================================
+==========================================
 
 Contents:
 
