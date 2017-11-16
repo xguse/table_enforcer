@@ -1,8 +1,9 @@
 """Provide builtin validator functions for common use cases.
 
-Validtor functions take a single argument (a column series) and
-return a series containing True/False bools based on which items
-pass the validation logic defined in the function.
+In general, validators take a single `pandas.Series` object as
+input and return a `pandas.Series` of the same shape and indexes
+containing `True` or `False` relative to which items passed the
+validation logic.
 """
 import pandas as pd
 # import numpy as np
@@ -30,3 +31,12 @@ def unique(series: pd.Series) -> pd.Series:
     """Test that the data items do not repeat."""
     return ~series.duplicated(keep=False)
 
+
+def upper(series):
+    """Test that the data items are all uppercase."""
+    return series.str.isupper()
+
+
+def lower(series):
+    """Test that the data items are all lowercase."""
+    return series.str.islower()

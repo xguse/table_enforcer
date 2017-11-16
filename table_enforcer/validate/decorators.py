@@ -6,7 +6,7 @@ import numpy as np
 
 
 def minmax(low, high):
-    """Test whether series items are not less than/greater than lo/hi."""
+    """Test that the data items fall within range: low <= x <= high."""
     def decorator(function):
         """Decorate a function with args."""
         @functools.wraps(function)
@@ -22,4 +22,42 @@ def minmax(low, high):
 
     return decorator
 
+
+def choice(choices):
+    """Test that the data items are members of the set `choices`."""
+    def decorator(function):
+        """Decorate a function with args."""
+        @functools.wraps(function)
+        def wrapper(*args, **kwargs):
+            """Wrap the function."""
+            series = function(*args, **kwargs)
+            return series.isin(set(choices))
+
+        return wrapper
+
+    return decorator
+
+
+def bounded_length(low, high=None):
+    """Test that the length of the data items fall within range: low <= x <= high.
+
+    If high is None, treat as exact length.
+    """
+    def decorator(function):
+        """Decorate a function with args."""
+        @functools.wraps(function)
+        def wrapper(*args, **kwargs):
+            """Wrap the function."""
+            series = function(*args, **kwargs)
+            if high is None:
+                return series.apply(lambda x: len(x) == low)
+            else:
+                lo_pass = series.apply(lambda x: low <= len(x))
+                hi_pass = series.apply(lambda x: len(x) <= high)
+
+                return lo_pass & hi_pass
+
+        return wrapper
+
+    return decorator
 
