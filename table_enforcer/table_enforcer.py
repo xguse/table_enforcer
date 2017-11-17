@@ -2,7 +2,6 @@
 """Main module."""
 import typing as t
 
-from functools import partial
 from collections import OrderedDict
 
 import pandas as pd
@@ -32,8 +31,6 @@ class Enforcer(object):
     def make_validations(self, table: pd.DataFrame) -> Munch:
         """Return a dict-like object containing dataframes of which tests passed/failed for each column."""
         results = Munch()
-
-        df = table[self.columns].copy()
 
         for name, column in self._columns.items():
             results[name] = column.validate(table)

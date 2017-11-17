@@ -40,3 +40,4 @@ def upper(series):
 def lower(series):
     """Test that the data items are all lowercase."""
     return series.str.islower()
+

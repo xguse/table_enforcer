@@ -1,9 +1,6 @@
 """Provide decoration functions to augment the behavior of validator functions."""
 import functools
 
-import pandas as pd
-import numpy as np
-
 
 def minmax(low, high):
     """Test that the data items fall within range: low <= x <= high."""

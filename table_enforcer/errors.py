@@ -5,15 +5,11 @@
 from table_enforcer import __author__, __email__
 
 
-
-
 class TableEnforcerError(Exception):
-
     """Base error class."""
 
 
 class NotImplementedYet(NotImplementedError, TableEnforcerError):
-
     """Raise when a section of code that has been left for another time is asked to execute."""
 
     def __init__(self, msg=None):
@@ -25,5 +21,4 @@ class NotImplementedYet(NotImplementedError, TableEnforcerError):
 
 
 class ValidationError(TableEnforcerError):
-
     """Raise when a validation/sanity check comes back with unexpected value."""
