@@ -1,6 +1,9 @@
 """Test the unit: Enforcer."""
 
-from table_enforcer.table_enforcer import Column
+from .conftest import col4  # noqa: F401
 
 
-from sqlalchemy import Column
+def test_init(col4):
+    assert col4.name == 'col4'
+    assert col4.dtype == str
+    assert col4.unique == False  # noqa: E712

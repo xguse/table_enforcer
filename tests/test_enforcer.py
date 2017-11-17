@@ -1,8 +1,10 @@
 """Test the unit: Enforcer."""
+from .conftest import enforcer
+from table_enforcer import Column, Enforcer
 
-from table_enforcer.table_enforcer import Enforcer
 
+def test_init(enforcer):
+    assert isinstance(enforcer, Enforcer)
 
-
-def test_init():
-    enf = Enforcer()
+    cols = [isinstance(c, Column) for c in enforcer._columns.values()]
+    assert all(cols)
