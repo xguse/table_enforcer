@@ -2,6 +2,14 @@
 History
 *******
 
+v0.1.2 / 2017-11-17
+===================
+
+  * flake8
+  * set up basic testing
+  * changed travis build settings
+  * updated usage demo and readme
+
 v0.1.1 / 2017-11-16
 ===================
 
