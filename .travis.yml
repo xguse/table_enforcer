@@ -18,15 +18,11 @@ deploy:
       a1dEb3V2cHJhSTJyU1pZZkJzV0srUmJGa0RSSTZyZDlVN1hRajUxdVljcUsvTFg4WnphSDBEczFB
       MUpYenk1VmIzMU1JYmhmVVp3UTVZVm5wNnIwM0RMYldHRXlYTjRFM05OR3hib2h3cXpJa0k1NW89
   true:
-    python: 2.7
+    python: 3.6
     repo: xguse/table_enforcer
     tags: true
 install: pip install -U tox-travis
 language: python
 python:
-- 3.5
-- 3.4
-- 3.3
-- 2.7
-- 2.6
+- 3.6
 script: tox
