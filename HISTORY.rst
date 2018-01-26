@@ -2,6 +2,13 @@
 History
 *******
 
+v0.1.3 / 2018-01-26
+===================
+
+  * corrected Usage_Demo.ipynb
+  * formatting and typing
+  * table_enforcer.py -> main_classes.py
+
 v0.1.2 / 2017-11-17
 ===================
 
