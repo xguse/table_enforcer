@@ -7,8 +7,6 @@ from collections import OrderedDict
 import pandas as pd
 
 from munch import Munch
-# import table_enforcer.errors as e
-from table_enforcer import validate as v
 
 __all__ = ["Enforcer", "Column"]
 
