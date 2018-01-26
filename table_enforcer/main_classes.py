@@ -37,7 +37,7 @@ class Enforcer(object):
 
         return results
 
-    def validate(self, table: pd.DataFrame, recode: bool=False) -> bool:
+    def validate(self, table: pd.DataFrame, recode: bool = False) -> bool:
         """Return True if all validation tests pass: False otherwise."""
         if recode:
             table = self.recode(table)
@@ -61,11 +61,7 @@ class Enforcer(object):
 class Column(object):
     """Class representing a single table column."""
 
-    def __init__(self,
-                 name: str,
-                 dtype: type,
-                 unique: bool,
-                 validators: t.List[VALIDATOR_FUNCTION],
+    def __init__(self, name: str, dtype: type, unique: bool, validators: t.List[VALIDATOR_FUNCTION],
                  recoders: t.List[RECODER_FUNCTION]) -> None:
         """Construct a new `Column` object."""
         if validators is None:
@@ -86,7 +82,7 @@ class Column(object):
         """Validate that the series data is the correct dtype."""
         return series.apply(lambda i: isinstance(i, self.dtype))
 
-    def validate(self, table: pd.DataFrame, recode: bool=False) -> pd.DataFrame:
+    def validate(self, table: pd.DataFrame, recode: bool = False) -> pd.DataFrame:
         """Return a dataframe of validation results for the correct column in table vs the vector of validators."""
         col = self.name
         validators = self.validators
@@ -117,6 +113,3 @@ class Column(object):
             data = recoder(data)
 
         return data
-
-
-
