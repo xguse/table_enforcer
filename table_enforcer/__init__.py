@@ -3,6 +3,6 @@
 
 __author__ = """Gus Dunn"""
 __email__ = 'w.gus.dunn@gmail.com'
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 from table_enforcer.main_classes import Enforcer, Column  # noqa: F401
