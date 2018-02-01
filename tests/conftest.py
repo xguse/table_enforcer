@@ -1,7 +1,6 @@
 import pytest
 import pandas as pd
 
-
 from table_enforcer import Column, Enforcer
 import table_enforcer.errors as e
 
@@ -24,13 +23,14 @@ def standardize_sex(series):
     Things like ['M', 'MALE', 'M', 'BOY', ...] are converted to `M`.
     Representations of female are treated similarly.
     """
-    mapper = {"M": "M",
-              "MALE": "M",
-              "BOY": "M",
-              "F": "F",
-              "FEMALE": "F",
-              "GIRL": "F",
-              }
+    mapper = {
+        "M": "M",
+        "MALE": "M",
+        "BOY": "M",
+        "F": "F",
+        "FEMALE": "F",
+        "GIRL": "F",
+    }
     if series.str.islower().any():
         raise ValueError("standardize_sex expects input series to contain only UPPERCASE letters.")
     else:
@@ -43,16 +43,29 @@ def source_table():
 
 
 @pytest.fixture()
-def col4():
-        col4 = Column(name='col4',
-                      dtype=str,
-                      unique=False,
-                      validators=[v.funcs.upper, length_is_one, valid_sex],
-                      recoders=[r.funcs.upper, standardize_sex])
+def col4(col4_validators, col4_recoders):
+    col4 = Column(name='col4', dtype=str, unique=False, validators=col4_validators, recoders=col4_recoders)
 
-        return col4
+    return col4
+
+
+@pytest.fixture()
+def col4_validators():
+    return [v.funcs.upper, length_is_one, valid_sex]
+
+
+@pytest.fixture()
+def col4_recoders():
+    return [r.funcs.upper, standardize_sex]
+
+
+@pytest.fixture()
+def col4_no_recoders(col4_validators):
+    col4 = Column(name='col4', dtype=str, unique=False, validators=col4_validators, recoders=[])
+
+    return col4
 
 
 @pytest.fixture()
 def enforcer(col4):
-        return Enforcer(columns=[col4])
+    return Enforcer(columns=[col4])
