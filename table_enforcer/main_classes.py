@@ -7,6 +7,8 @@ from collections import OrderedDict
 import pandas as pd
 
 from munch import Munch
+from table_enforcer.errors import ValidationError
+from table_enforcer import validate as v
 
 __all__ = ["Enforcer", "Column"]
 
@@ -35,10 +37,10 @@ class Enforcer(object):
 
         return results
 
-    def validate(self, table: pd.DataFrame, recode: bool = False) -> bool:
+    def validate(self, table: pd.DataFrame) -> bool:
         """Return True if all validation tests pass: False otherwise."""
-        if recode:
-            table = self.recode(table)
+
+        table = self.recode(table)
 
         validations = self.make_validations(table=table)
 
@@ -46,14 +48,26 @@ class Enforcer(object):
 
         return all(results)
 
-    def recode(self, table: pd.DataFrame) -> pd.DataFrame:
-        """Return a fully recoded dataframe."""
+    def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
+        """Return a fully recoded dataframe.
+
+        If `validate`: raise ValidationError if validation fails.
+        """
         df = table[self.columns].copy()
 
         for name, column in self._columns.items():
             df[name] = column.recode(table)
 
-        return df
+        if validate:
+            try:
+                if self.validate(table=df):
+                    return df
+                else:
+                    raise ValidationError()
+            except (Exception, LookupError) as err:
+                raise ValidationError(err)
+        else:
+            return df
 
 
 class Column(object):
@@ -80,15 +94,12 @@ class Column(object):
         """Validate that the series data is the correct dtype."""
         return series.apply(lambda i: isinstance(i, self.dtype))
 
-    def validate(self, table: pd.DataFrame, recode: bool = False) -> pd.DataFrame:
+    def validate(self, table: pd.DataFrame) -> pd.DataFrame:
         """Return a dataframe of validation results for the correct column in table vs the vector of validators."""
         col = self.name
         validators = self.validators
 
-        if recode:
-            series = self.recode(table)
-        else:
-            series = table[col]
+        series = self.recode(table)
 
         results = pd.DataFrame({validator: series for validator in validators})
 
@@ -101,13 +112,28 @@ class Column(object):
 
         return results
 
-    def recode(self, table: pd.DataFrame) -> pd.Series:
-        """Pass the appropriate column data in `table` through each recoder function in series and return the final result."""
+    def recode(self, table: pd.DataFrame, validate=False) -> pd.Series:
+        """Pass the appropriate column data in `table` through each recoder function in series and return the final result.
+
+        If `validate`: raise ValidationError if validation fails.
+        """
         col = self.name
         series = table[col]
 
         data = series.copy()
         for recoder in self.recoders.values():
-            data = recoder(data)
+            try:
+                data = recoder(data)
+            except (Exception, LookupError) as err:
+                raise ValidationError(err)
 
-        return data
+        if validate:
+            try:
+                if self.validate(table=table).all().all():
+                    return data
+                else:
+                    raise ValidationError()
+            except (Exception, LookupError) as err:
+                raise ValidationError(err)
+        else:
+            return data
