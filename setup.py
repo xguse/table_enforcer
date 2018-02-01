@@ -49,7 +49,7 @@ test_requirements = filter_req_paths(paths=[Path("requirements.dev.txt"),
 
 setup(
     name='table_enforcer',
-    version='0.1.4',
+    version='0.1.5',
     description="ORM-like package for defining, loading, and validating table schemas in pandas.",
     long_description=readme + '\n\n' + history,
     author="Gus Dunn",
