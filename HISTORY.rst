@@ -2,6 +2,12 @@
 History
 *******
 
+v0.1.5 / 2018-02-01
+===================
+
+  * Added tests for imports and more Class behavior
+  * main_classes: calling recode with validate is now prefered
+
 v0.1.4 / 2018-01-26
 ===================
 
