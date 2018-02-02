@@ -80,6 +80,7 @@ class Column(object):
             validators = []
         if recoders is None:
             recoders = []
+
         self.name = name
         self.dtype = dtype
         self.unique = unique
@@ -107,6 +108,7 @@ class Column(object):
             results[name] = func(results[name])
 
         results['dtype'] = self._validate_series_dtype(series)
+
         if self.unique:
             results['unique'] = v.funcs.unique(series)
 
@@ -121,6 +123,7 @@ class Column(object):
         series = table[col]
 
         data = series.copy()
+
         for recoder in self.recoders.values():
             try:
                 data = recoder(data)
