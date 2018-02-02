@@ -124,6 +124,11 @@ class Column(object):
         If `validate`: raise ValidationError if validation fails.
         """
         self._check_series_name(series)
+
+        def find_failed_rows(results):
+            failed_rows = results.apply(lambda vec: ~vec.all(), axis=1)
+            return results.loc[failed_rows]
+
         col = self.name
 
         data = series.copy()
@@ -135,12 +140,8 @@ class Column(object):
                 raise ValidationError(err)
 
         if validate:
-            try:
-                if self.validate(table=table).all().all():
-                    return data
-                else:
-                    raise ValidationError()
-            except (Exception, LookupError) as err:
-                raise ValidationError(err)
-        else:
+            failed_rows = find_failed_rows(self.validate(data))
+            if failed_rows.shape[0] > 0:
+                raise ValidationError(f"Rows that failed to validate for column '{self.name}':\n{failed_rows}")
+
             return data
