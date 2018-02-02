@@ -28,7 +28,7 @@ class Enforcer(object):
 
         self.columns = list(self._columns.keys())
 
-    def make_validations(self, table: pd.DataFrame) -> Munch:
+    def _make_validations(self, table: pd.DataFrame) -> Munch:
         """Return a dict-like object containing dataframes of which tests passed/failed for each column."""
         results = Munch()
 
@@ -42,7 +42,7 @@ class Enforcer(object):
 
         table = self.recode(table)
 
-        validations = self.make_validations(table=table)
+        validations = self._make_validations(table=table)
 
         results = [df.all().all() for df in validations.values()]
 
