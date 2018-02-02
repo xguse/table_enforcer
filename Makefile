@@ -84,7 +84,7 @@ clean-docs:
 ## check style with flake8
 lint:
 	source activate $(CONDA_ENV_NAME) && \
-	flake8 $(PACKAGE_NAME) tests
+	flake8 $(PACKAGE_NAME)
 
 ## run tests quickly with the default Python
 test:
