@@ -40,8 +40,6 @@ class Enforcer(object):
     def validate(self, table: pd.DataFrame) -> bool:
         """Return True if all validation tests pass: False otherwise."""
 
-        table = self.recode(table)
-
         validations = self._make_validations(table=table)
 
         results = [df.all().all() for df in validations.values()]
