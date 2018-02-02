@@ -8,6 +8,11 @@ from table_enforcer import validate as v
 from table_enforcer import recode as r
 
 
+
+TABLE_PATH_1 = "tests/files/demo_table.csv"
+TABLE_PATH_2 = "tests/files/demo_table_bad.csv"
+
+
 def length_is_one(series):
     return series.str.len() == 1
 
@@ -39,7 +44,7 @@ def standardize_sex(series):
 
 @pytest.fixture()
 def source_table():
-    return pd.read_csv("tests/files/demo_table.csv")
+    return pd.read_csv(TABLE_PATH_1)
 
 
 @pytest.fixture()
