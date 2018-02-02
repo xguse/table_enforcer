@@ -53,7 +53,7 @@ class Enforcer(object):
 
         If `validate`: raise ValidationError if validation fails.
         """
-        df = table[self.columns].copy()
+        df = pd.DataFrame(index=table.index)
 
         for name, column in self._columns.items():
             df[name] = column.recode(table)
