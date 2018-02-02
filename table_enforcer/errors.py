@@ -15,10 +15,18 @@ class NotImplementedYet(NotImplementedError, TableEnforcerError):
     def __init__(self, msg=None):
         """Set up the Exception."""
         if msg is None:
-            msg = "That bonehead {author} should really hear your rage about this disgraceful result! Feel free to tell them at {email}".format(author=__author__, email=__email__)
-
-        self.args = (msg, *self.args)
+            msg = f"That bonehead {__author__} should really hear your rage about this disgraceful result! Feel free to tell them at {__email__}"
+            self.args = (msg, *self.args)
 
 
 class ValidationError(TableEnforcerError):
-    """Raise when a validation/sanity check comes back with unexpected value."""
+    """Raise when a validator function fails to generate all successes when called inside of a `recode` method."""
+
+
+class RecodingError(TableEnforcerError):
+    """Raise when a recoder function raises an error."""
+
+    def __init__(self, column, recoder, exception):
+        """Set up the Exception."""
+        msg = f"Recoder '{recoder.__name__}' raised the following error on column '{column}': {repr(exception)}."
+        self.args = (msg,)
