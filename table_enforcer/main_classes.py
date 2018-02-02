@@ -33,7 +33,7 @@ class Enforcer(object):
         results = Munch()
 
         for name, column in self._columns.items():
-            results[name] = column.validate(table)
+            results[name] = column.validate(table[name])
 
         return results
 
@@ -56,7 +56,7 @@ class Enforcer(object):
         df = pd.DataFrame(index=table.index)
 
         for name, column in self._columns.items():
-            df[name] = column.recode(table)
+            df[name] = column.recode(series=table[name], validate=validate)
 
         if validate:
             try:
@@ -95,14 +95,18 @@ class Column(object):
         """Validate that the series data is the correct dtype."""
         return series.apply(lambda i: isinstance(i, self.dtype))
 
-    def validate(self, table: pd.DataFrame) -> pd.DataFrame:
-        """Return a dataframe of validation results for the correct column in table vs the vector of validators."""
-        col = self.name
+    def _check_series_name(self, series):
+        if series.name != self.name:
+            raise ValueError(
+                f"The name of provided series '{series.name}' does not match this column's name '{self.name}'.")
+
+    def validate(self, series: pd.Series) -> pd.DataFrame:
+        """Return a dataframe of validation results for the provided series vs the vector of validators."""
+        self._check_series_name(series)
+
         validators = self.validators
 
-        series = self.recode(table)
-
-        results = pd.DataFrame({validator: series for validator in validators})
+        results = pd.DataFrame({validator: series for validator in validators}, index=series.index)
 
         for name, func in validators.items():
             results[name] = func(results[name])
@@ -114,13 +118,13 @@ class Column(object):
 
         return results
 
-    def recode(self, table: pd.DataFrame, validate=False) -> pd.Series:
-        """Pass the appropriate column data in `table` through each recoder function in series and return the final result.
+    def recode(self, series: pd.Series, validate=False) -> pd.Series:
+        """Pass the provided series obj through each recoder function sequentially and return the final result.
 
         If `validate`: raise ValidationError if validation fails.
         """
+        self._check_series_name(series)
         col = self.name
-        series = table[col]
 
         data = series.copy()
 
