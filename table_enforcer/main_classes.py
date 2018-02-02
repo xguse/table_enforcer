@@ -7,7 +7,7 @@ from collections import OrderedDict
 import pandas as pd
 
 from munch import Munch
-from table_enforcer.errors import ValidationError
+from table_enforcer.errors import ValidationError, RecodingError
 from table_enforcer import validate as v
 
 __all__ = ["Enforcer", "Column"]
@@ -56,16 +56,7 @@ class Enforcer(object):
         for name, column in self._columns.items():
             df[name] = column.recode(series=table[name], validate=validate)
 
-        if validate:
-            try:
-                if self.validate(table=df):
-                    return df
-                else:
-                    raise ValidationError()
-            except (Exception, LookupError) as err:
-                raise ValidationError(err)
-        else:
-            return df
+        return df
 
 
 class Column(object):
@@ -134,12 +125,12 @@ class Column(object):
         for recoder in self.recoders.values():
             try:
                 data = recoder(data)
-            except (Exception, LookupError) as err:
-                raise ValidationError(err)
+            except (BaseException) as err:
+                raise RecodingError(col, recoder, err)
 
         if validate:
             failed_rows = find_failed_rows(self.validate(data))
             if failed_rows.shape[0] > 0:
                 raise ValidationError(f"Rows that failed to validate for column '{self.name}':\n{failed_rows}")
 
-            return data
+        return data
