@@ -2,6 +2,22 @@
 History
 *******
 
+v0.2.0 / 2018-02-02
+===================
+
+  * Enforcer.recode lets Column.recode do the validation now
+  * Enforcer.validate no longer recodes
+  * Enforcer: make_validations now private
+  * Column: added find_failed_rows()
+  * columns now take series not dataframe
+  * added system-lvl tests based on Usage_Demo.ipynb
+  * Enforcer.recode create new df rather than copy
+  * added RecoderError and focused ValidationError
+  * remove testing for 3.5
+  * dont lint tests
+  * ignore flake8:W292
+  * formatting
+
 v0.1.5 / 2018-02-01
 ===================
 
