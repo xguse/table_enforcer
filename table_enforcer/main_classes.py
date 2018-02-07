@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from munch import Munch
+from box import Box
 from table_enforcer.errors import ValidationError, RecodingError
 from table_enforcer import validate as v
 
@@ -28,9 +28,9 @@ class Enforcer(object):
 
         self.columns = list(self._columns.keys())
 
-    def _make_validations(self, table: pd.DataFrame) -> Munch:
+    def _make_validations(self, table: pd.DataFrame) -> Box:
         """Return a dict-like object containing dataframes of which tests passed/failed for each column."""
-        results = Munch()
+        results = Box()
 
         for name, column in self._columns.items():
             results[name] = column.validate(table[name])
