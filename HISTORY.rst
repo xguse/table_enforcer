@@ -2,6 +2,21 @@
 History
 *******
 
+v0.3.0 / 2018-02-07
+===================
+
+  * main_classes: OTMColumn is functional
+  * updated testing for OTMColumn
+  * main_classes: replace Munch w/ Box (probationary)
+  * add python-box to reqs (probationary)
+  * conftest: modularize paths
+  * add testing for OTMColumn
+  * test_column: fix typos and style
+  * import all from main_classes
+  * Bump version: 0.1.5 → 0.2.0
+  * changelog(v0.2.0)
+  * Updated Docs version Usage_Demo.ipynb
+
 v0.2.0 / 2018-02-02
 ===================
 
