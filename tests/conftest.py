@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 import pandas as pd
 
@@ -7,10 +9,10 @@ import table_enforcer.errors as e
 from table_enforcer import validate as v
 from table_enforcer import recode as r
 
+TEST_FILES = Path("tests/files/")
 
-
-TABLE_PATH_1 = "tests/files/demo_table.csv"
-TABLE_PATH_2 = "tests/files/demo_table_bad.csv"
+TABLE_PATH_1 = TEST_FILES / "demo_table.csv"
+TABLE_PATH_2 = TEST_FILES / "demo_table_bad.csv"
 
 
 def length_is_one(series):
