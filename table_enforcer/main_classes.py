@@ -188,12 +188,13 @@ class OTMColumn(BaseColumn):
             split_func: SPLIT_FUNCTION,) -> None:
         """Construct a new ``OTMColumn`` object.
 
-        This class allows the splitting of a single column's data into multiple
-        child columns based on logic defined in the provided ``split_func``. The resulting
-        child columns are ``Column`` objects defined in their own right along with accompanying
-        validators and recoders. These are provided through the ``child_columns`` attr and
-        are responsible for dealing with the `pd.Series` objects created after applying the
-        ``split_func`` as normal.
+        This class enables splitting a single column into multiple child columns
+        based on logic defined in the provided ``split_func``. The child columns are
+        provided through the ``child_columns`` attr and are responsible for processing the
+        `pd.Series` objects created AFTER applying the ``split_func``. As such, child columns
+        are ``Column`` objects defined in their own right along with accompanying all
+        appropriate validators and recoders. Validators and recoders provided directly to the
+        OTMColumn are responsible for processing the original parent column.
 
 
         ``OTMColumn.dtype == str`` and is set automatically because only ``str`` splitting is
