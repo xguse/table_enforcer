@@ -68,7 +68,7 @@ class Enforcer(object):
         df = pd.DataFrame(index=table.index)
 
         for name, column in self._columns.items():
-            df = column.update_dataframe(df, series=table[name])
+            df = column.update_dataframe(df, series=table[name], validate=validate)
 
         return df
 
@@ -107,8 +107,8 @@ class BaseColumn(object):
         if series.name != name:
             raise ValueError(f"The name of provided series '{series.name}' does not match this column's name '{name}'.")
 
-    def update_dataframe(self, df, series):
-        """Perform ``self.recode(series, validate=True)`` and add resulting column(s) to ``df`` and return ``df``."""
+    def update_dataframe(self, df, series, validate=False):
+        """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
         raise NotImplementedError('This method should be overridden by subclass.')
 
     def validate(self, series: pd.Series, **kwargs) -> pd.DataFrame:
@@ -168,10 +168,10 @@ class Column(BaseColumn):
         """Construct a new `Column` object."""
         super().__init__(name=name, dtype=dtype, unique=unique, validators=validators, recoders=recoders)
 
-    def update_dataframe(self, df, series):
-        """Perform ``self.recode(series, validate=True)``, and add resulting column to ``df`` and return ``df``."""
+    def update_dataframe(self, df, series, validate=False):
+        """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
         df = df.copy()
-        df[self.name] = self.recode(series=series, validate=True)
+        df[self.name] = self.recode(series=series, validate=validate)
         return df
 
 
@@ -218,8 +218,12 @@ class OTMColumn(BaseColumn):
         self._child_columns = OrderedDict({col.name: col for col in child_columns})
         self._split_func = split_func
 
-    def update_dataframe(self, df, series):
-        """Perform ``self.recode(series, validate=True)``, and add resulting columns to ``df`` and return ``df``."""
+    def update_dataframe(self, df, series, validate=False):
+        """Add resulting column(s) to ``df`` and return ``df``.
+
+        Recode and split the parent column. Then call each child column's
+        ``update_dataframe`` method in sequence.
+        """
         df = df.copy()
 
         split_series = self.split_parent(series=series, recode=True)
