@@ -1,12 +1,4 @@
-col1,col2,col3,col4,col5
-7,3,10,male,01:one*
-2,4,6,m,3:Three
-6,6,2,F,10:ten
-
-
-
-
-
-
-
-
+col1,col2,col3,col4,col5,col6,col7,col8
+7,3,10,male,01:one*,0,1,1
+2,4,6,m,3:Three,1,0,0
+6,6,2,F,10:ten,0,1,0
