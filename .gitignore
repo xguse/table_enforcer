@@ -72,3 +72,7 @@ target/
 
 # jupyter
 notebooks/
+
+
+# LibreOffice lock files
+.~lock.*#
