@@ -47,7 +47,7 @@ class Enforcer(object):
         results = Box()
 
         for name, column in self._columns.items():
-            results[name] = column.validate(table[name])
+            results[name] = column.validate(table)
 
         return results
 
@@ -68,7 +68,7 @@ class Enforcer(object):
         df = pd.DataFrame(index=table.index)
 
         for name, column in self._columns.items():
-            df = column.update_dataframe(df, series=table[name], validate=validate)
+            df = column.update_dataframe(df, table=table, validate=validate)
 
         return df
 
@@ -107,12 +107,16 @@ class BaseColumn(object):
         if series.name != name:
             raise ValueError(f"The name of provided series '{series.name}' does not match this column's name '{name}'.")
 
-    def update_dataframe(self, df, series, validate=False):
+    def update_dataframe(self, df, table, validate=False):
         """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
-        raise NotImplementedError('This method should be overridden by subclass.')
+        df = df.copy()
+        df[self.name] = self.recode(table=table, validate=validate)
+        return df
 
-    def validate(self, series: pd.Series, **kwargs) -> pd.DataFrame:
-        """Return a dataframe of validation results for the provided series vs the vector of validators."""
+    def validate(self, table: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        series = table[self.name]
+
         override_name = set_from_kwargs(kwargs, key="override_name", default=None)
         self._check_series_name(series, override_name=override_name)
 
@@ -130,11 +134,13 @@ class BaseColumn(object):
 
         return results
 
-    def recode(self, series: pd.Series, validate=False, **kwargs) -> pd.Series:
+    def recode(self, table: pd.DataFrame, validate=False, **kwargs) -> pd.DataFrame:
         """Pass the provided series obj through each recoder function sequentially and return the final result.
 
         If `validate`: raise ValidationError if validation fails.
         """
+        series = table[self.name]
+
         override_name = set_from_kwargs(kwargs, key="override_name", default=None)
         self._check_series_name(series, override_name=override_name)
 
@@ -157,7 +163,7 @@ class BaseColumn(object):
             if failed_rows.shape[0] > 0:
                 raise ValidationError(f"Rows that failed to validate for column '{self.name}':\n{failed_rows}")
 
-        return data
+        return data.to_frame()
 
 
 class Column(BaseColumn):
