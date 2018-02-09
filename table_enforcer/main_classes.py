@@ -74,7 +74,11 @@ class Enforcer(object):
 
 
 class BaseColumn(object):
-    """Base class representing a single table column."""
+    """Base Class for Columns."""
+
+
+class Column(BaseColumn):
+    """Class representing a simple table column."""
 
     def __init__(self, name: str, dtype: type, unique: bool, validators: t.List[VALIDATOR_FUNCTION],
                  recoders: t.List[RECODER_FUNCTION]) -> None:
@@ -166,19 +170,41 @@ class BaseColumn(object):
         return data.to_frame()
 
 
-class Column(BaseColumn):
-    """Class representing a single table column."""
+class ComplexColumn(BaseColumn):
+    """Class representing multiple columns and the logic governing their transformation from source table to recoded table."""
 
-    def __init__(self, name: str, dtype: type, unique: bool, validators: t.List[VALIDATOR_FUNCTION],
-                 recoders: t.List[RECODER_FUNCTION]) -> None:
-        """Construct a new `Column` object."""
-        super().__init__(name=name, dtype=dtype, unique=unique, validators=validators, recoders=recoders)
+    def __init__(
+            self,
+            input_columns: t.List[Column],
+            output_columns: t.List[Column],
+            row_transform,) -> None:
+        """Construct a new ``ComplexColumn`` object.
 
-    def update_dataframe(self, df, series, validate=False):
+        Intended to be used as Base Class.
+
+        Args:
+            input_columns (list, Column): A list of ``Column`` objects representing column(s) from the SOURCE table.
+            output_columns (list, Column): A list of ``Column`` objects representing column(s) from the FINAL table.
+            row_transform (Callable): Function accepting a row-like object, performing transformations to it and returning a row-like object.
+        """
+        self.input_columns = input_columns
+        self.output_columns = output_columns
+        self.row_transform = row_transform
+
+    def update_dataframe(self, df, table, validate=False):
         """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
-        df = df.copy()
-        df[self.name] = self.recode(series=series, validate=validate)
-        return df
+        raise NotImplementedError("This method must be defined for each subclass.")
+
+    def validate(self, table: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        raise NotImplementedError("This method must be defined for each subclass.")
+
+    def recode(self, table: pd.DataFrame, validate=False, **kwargs) -> pd.DataFrame:
+        """Pass the appropriate columns through each recoder function sequentially and return the final result.
+
+        If `validate`: raise ValidationError if validation fails.
+        """
+        raise NotImplementedError("This method must be defined for each subclass.")
 
 
 class OTMColumn(BaseColumn):
