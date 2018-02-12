@@ -35,28 +35,22 @@ class Enforcer(object):
 
     def __init__(self, columns):
         """Initialize an enforcer instance."""
-        self._columns = OrderedDict()
-
-        for column in columns:
-            self._columns[column.name] = column
-
-        self.columns = list(self._columns.keys())
+        self.columns = columns
 
     def _make_validations(self, table: pd.DataFrame) -> Box:
         """Return a dict-like object containing dataframes of which tests passed/failed for each column."""
-        results = Box()
+        results = []
 
-        for name, column in self._columns.items():
-            results[name] = column.validate(table)
+        for column in self.columns:
+            results.append(column.validate(table))
 
         return results
 
     def validate(self, table: pd.DataFrame) -> bool:
         """Return True if all validation tests pass: False otherwise."""
-
         validations = self._make_validations(table=table)
 
-        results = [df.all().all() for df in validations.values()]
+        results = [df.all().all() for df in validations]
 
         return all(results)
 
@@ -67,7 +61,7 @@ class Enforcer(object):
         """
         df = pd.DataFrame(index=table.index)
 
-        for name, column in self._columns.items():
+        for column in self.columns:
             df = column.update_dataframe(df, table=table, validate=validate)
 
         return df
