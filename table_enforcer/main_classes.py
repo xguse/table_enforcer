@@ -70,6 +70,23 @@ class Enforcer(object):
 class BaseColumn(object):
     """Base Class for Columns."""
 
+    def update_dataframe(self, df, table, validate=False):
+        """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
+        df = df.copy()
+        recoded_columns = self.recode(table=table, validate=validate)
+        return pd.concat([df, recoded_columns], axis=1)
+
+    def validate(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        raise NotImplementedError("This method must be defined for each subclass.")
+
+    def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
+        """Pass the appropriate columns through each recoder function sequentially and return the final result.
+
+        If `validate`: raise ValidationError if validation fails.
+        """
+        raise NotImplementedError("This method must be defined for each subclass.")
+
 
 class Column(BaseColumn):
     """Class representing a simple table column."""
