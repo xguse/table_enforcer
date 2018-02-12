@@ -8,7 +8,7 @@ from table_enforcer import Column, Enforcer
 def test_init(enforcer):
     assert isinstance(enforcer, Enforcer)
 
-    cols = [isinstance(c, Column) for c in enforcer._columns.values()]
+    cols = [isinstance(c, Column) for c in enforcer.columns]
     assert all(cols)
     assert all(cols)
 
