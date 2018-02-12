@@ -19,7 +19,11 @@ __all__ = [
 
 VALIDATOR_FUNCTION = t.Callable[[pd.Series], pd.DataFrame]
 RECODER_FUNCTION = t.Callable[[pd.Series], pd.Series]
-SPLIT_FUNCTION = t.Callable[[str], list]
+
+
+def find_failed_rows(results):
+    failed_rows = results.apply(lambda vec: ~vec.all(), axis=1)
+    return results.loc[failed_rows]
 
 
 def set_from_kwargs(kwargs, key, default):
@@ -122,18 +126,11 @@ class Column(BaseColumn):
         if series.name != name:
             raise ValueError(f"The name of provided series '{series.name}' does not match this column's name '{name}'.")
 
-    def update_dataframe(self, df, table, validate=False):
-        """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
-        df = df.copy()
-        df[self.name] = self.recode(table=table, validate=validate)
-        return df
-
-    def validate(self, table: pd.DataFrame, **kwargs) -> pd.DataFrame:
+    def validate(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
         """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
         series = table[self.name]
 
-        override_name = set_from_kwargs(kwargs, key="override_name", default=None)
-        self._check_series_name(series, override_name=override_name)
+        self._check_series_name(series)
 
         validators = self.validators
 
@@ -147,21 +144,19 @@ class Column(BaseColumn):
         if self.unique:
             results['unique'] = v.funcs.unique(series)
 
+        if failed_only:
+            results = find_failed_rows(results)
+
         return results
 
-    def recode(self, table: pd.DataFrame, validate=False, **kwargs) -> pd.DataFrame:
+    def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         """Pass the provided series obj through each recoder function sequentially and return the final result.
 
         If `validate`: raise ValidationError if validation fails.
         """
         series = table[self.name]
 
-        override_name = set_from_kwargs(kwargs, key="override_name", default=None)
-        self._check_series_name(series, override_name=override_name)
-
-        def find_failed_rows(results):
-            failed_rows = results.apply(lambda vec: ~vec.all(), axis=1)
-            return results.loc[failed_rows]
+        self._check_series_name(series)
 
         col = self.name
 
@@ -174,7 +169,7 @@ class Column(BaseColumn):
                 raise RecodingError(col, recoder, err)
 
         if validate:
-            failed_rows = find_failed_rows(self.validate(data, override_name=override_name))
+            failed_rows = find_failed_rows(self.validate(data.to_frame()))
             if failed_rows.shape[0] > 0:
                 raise ValidationError(f"Rows that failed to validate for column '{self.name}':\n{failed_rows}")
 
@@ -188,7 +183,7 @@ class ComplexColumn(BaseColumn):
             self,
             input_columns: t.List[Column],
             output_columns: t.List[Column],
-            row_transform,) -> None:
+            column_transform,) -> None:
         """Construct a new ``ComplexColumn`` object.
 
         Intended to be used as Base Class.
@@ -196,143 +191,103 @@ class ComplexColumn(BaseColumn):
         Args:
             input_columns (list, Column): A list of ``Column`` objects representing column(s) from the SOURCE table.
             output_columns (list, Column): A list of ``Column`` objects representing column(s) from the FINAL table.
-            row_transform (Callable): Function accepting a row-like object, performing transformations to it and returning a row-like object.
+            column_transform (Callable): Function accepting the table object, performing transformations to it and returning a DataFrame containing the NEW columns only.
         """
         self.input_columns = input_columns
         self.output_columns = output_columns
-        self.row_transform = row_transform
+        self.column_transform = column_transform
 
-    def update_dataframe(self, df, table, validate=False):
-        """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
+    def _validate_input(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
         raise NotImplementedError("This method must be defined for each subclass.")
 
-    def validate(self, table: pd.DataFrame, **kwargs) -> pd.DataFrame:
-        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+    def _validate_output(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
         raise NotImplementedError("This method must be defined for each subclass.")
 
-    def recode(self, table: pd.DataFrame, validate=False, **kwargs) -> pd.DataFrame:
-        """Pass the appropriate columns through each recoder function sequentially and return the final result.
+    def recode_input(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
+        raise NotImplementedError("This method must be defined for each subclass.")
 
-        If `validate`: raise ValidationError if validation fails.
-        """
+    def recode_output(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         raise NotImplementedError("This method must be defined for each subclass.")
 
 
-class OTMColumn(BaseColumn):
+class OTMColumn(ComplexColumn):
     """Class representing a set of table columns derived from spliting up a single parent column."""
 
     def __init__(
             self,
-            name: str,
-            unique: bool,
-            validators: t.List[VALIDATOR_FUNCTION],
-            recoders: t.List[RECODER_FUNCTION],
-            child_columns: t.List[Column],
-            split_func: SPLIT_FUNCTION,) -> None:
+            input_columns: t.List[Column],
+            output_columns: t.List[Column],
+            column_transform,) -> None:
         """Construct a new ``OTMColumn`` object.
 
-        This class enables splitting a single column into multiple child columns
-        based on logic defined in the provided ``split_func``. The child columns are
-        provided through the ``child_columns`` attr and are responsible for processing the
-        `pd.Series` objects created AFTER applying the ``split_func``. As such, child columns
-        are ``Column`` objects defined in their own right along with accompanying all
-        appropriate validators and recoders. Validators and recoders provided directly to the
-        OTMColumn are responsible for processing the original parent column.
-
-
-        ``OTMColumn.dtype == str`` and is set automatically because only ``str`` splitting is
-        supported at the moment.
+        This class enables splitting a single input column into multiple output columns
+        based on logic defined in the provided ``column_transform``.
 
         Args:
-            name (str): Name of the target column in the dataframe.
-            unique (bool): If ``True``, column values may not repeat.
-            validators (list): List of validators for PRE-SPLIT column.
-            recoders (list): List of recoders for PRE-SPLIT column.
-            child_columns (list): List of fully defined ``Column`` objects
-                                  that will represent the new columns generated
-                                  from the splitting. The order of these are
-                                  preserved in the final dataframe.
-            split_func (Callable): A function to split the original column value. Must
-                                   return dict-like object with keys matching the names
-                                   of ``child_columns``.
+            input_columns (list, Column): A list of ``Column`` objects representing column(s) from the SOURCE table.
+            output_columns (list, Column): A list of ``Column`` objects representing column(s) from the FINAL table.
+            column_transform (Callable): Function accepting the table object, performing transformations to it and returning a DataFrame containing the NEW columns only.
 
         """
-        super().__init__(name=name, dtype=str, unique=unique, validators=validators, recoders=recoders)
+        super().__init__(input_columns=input_columns, output_columns=output_columns, column_transform=column_transform)
 
-        self._child_columns = OrderedDict({col.name: col for col in child_columns})
-        self._split_func = split_func
+    def _do_validation_set(self, table: pd.DataFrame, columns, validation_type, failed_only=False) -> pd.DataFrame:
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        validations = []
 
-    def update_dataframe(self, df, series, validate=False):
-        """Add resulting column(s) to ``df`` and return ``df``.
+        for column in columns:
+            validation = column.validate(table=table, failed_only=failed_only)
+            validation["column_name"] = column.name
+            validation["validation_type"] = validation_type
+            validations.append(validation)
 
-        Recode and split the parent column. Then call each child column's
-        ``update_dataframe`` method in sequence.
-        """
-        df = df.copy()
+        validation_table = pd.concat(validations)
+        validation_table.index.name = 'row'
 
-        split_series = self.split_parent(series=series, recode=True)
+        return validation_table.reset_index().set_index(["validation_type", "column_name", "row"])
 
-        for column in self._child_columns.values():
-            df = column.update_dataframe(df=df, series=split_series[column.name])
+    def _validate_input(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        return self._do_validation_set(
+            table=table,
+            columns=self.input_columns,
+            validation_type="input",
+            failed_only=failed_only,)
 
-        return df
+    def _recode_set(self, table: pd.DataFrame, columns, validate=False) -> pd.DataFrame:
+        recoded_columns = []
 
-    def split_parent(self, series, recode=False):
-        """Split the original series into multiple series and return the dict.
+        for column in columns:
+            recoded = column.recode(table=table, validate=validate)
+            recoded_columns.append(recoded)
 
-        Each new series will be named in accordance with self._child_columns.
-        """
-        if recode:
-            parent_series = self.recode_parent(series, validate=False)
-        else:
-            parent_series = series
+        return pd.concat(recoded_columns, axis=1)
 
-        series_of_dicts = parent_series.apply(self._split_func)
+    def _recode_input(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
+        return self._recode_set(table=table, columns=self.input_columns, validate=validate)
 
-        split_series = {}
+    def _validate_output(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
+        transformed_columns = self.column_transform(table)
+        return self._do_validation_set(
+            table=transformed_columns,
+            columns=self.output_columns,
+            validation_type="output",
+            failed_only=failed_only,)
 
-        for name in self._child_columns:
-            new_series = series_of_dicts.apply(lambda i: i[name])
-            new_series.name = name
-            split_series[name] = new_series
+    def _recode_output(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
+        transformed_columns = self.column_transform(table)
+        return self._recode_set(table=transformed_columns, columns=self.output_columns, validate=validate)
 
-        return split_series
+    def validate(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        return pd.concat([
+            self._validate_input(table, failed_only=failed_only),
+            self._validate_output(table, failed_only=failed_only),
+        ]).fillna(True)
 
-    def validate_parent(self, series: pd.Series) -> pd.DataFrame:
-        """Return a dataframe of validation results for the original data vs the parent column's vector of validators."""
-        return super().validate(series=series)
-
-    def recode_parent(self, series: pd.Series, validate=False) -> pd.Series:
-        """Pass the provided series obj through each of the original column's recoder functions sequentially and return the final result.
+    def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
+        """Pass the appropriate columns through each recoder function sequentially and return the final result.
 
         If `validate`: raise ValidationError if validation fails.
         """
-        return super().recode(series=series, validate=validate)
-
-    def validate(self, series: pd.Series, **kwargs) -> pd.DataFrame:
-        """Return a dataframe of validation results for the parent and split series series vs each's vector of validators."""
-        validations = {}
-        validations[self.name] = self.validate_parent(series)
-        validations[self.name]["Validations"] = self.name
-
-        split_series = self.split_parent(series=series, recode=False)
-
-        for name, col in self._child_columns.items():
-            validations[name] = col.validate(split_series[name], override_name=name)
-            validations[name]["Validations"] = name
-
-        return pd.concat(validations.values()).set_index("Validations").fillna(True)
-
-    def recode(self, series: pd.Series, validate=False, **kwargs) -> pd.Series:
-        """Pass the provided series obj through each recoder function sequentially and return the final result.
-
-        If `validate`: raise ValidationError if validation fails.
-        """
-        split_series = self.split_parent(series=series, recode=True)
-
-        recoded_children = []
-
-        for name, col in self._child_columns.items():
-            recoded_children.append(col.recode(series=split_series[name], validate=validate, override_name=name))
-
-        return recoded_children
+        return self._recode_output(self._recode_input(table, validate=validate), validate=validate)
