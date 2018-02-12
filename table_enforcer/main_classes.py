@@ -231,6 +231,9 @@ class OTMColumn(ComplexColumn):
         """
         super().__init__(input_columns=input_columns, output_columns=output_columns, column_transform=column_transform)
 
+        if len(input_columns) != 1:
+            raise ValueError("OTMColumn.input_columns must be a list of length 1.")
+
     def _do_validation_set(self, table: pd.DataFrame, columns, validation_type, failed_only=False) -> pd.DataFrame:
         """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
         validations = []

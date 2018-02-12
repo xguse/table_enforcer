@@ -140,6 +140,13 @@ def test_OTMColumn_init(col5_split, col5, col5_a, col5_b):
     assert all([isinstance(c, Column) for c in col5_split.input_columns])
     assert all([isinstance(c, Column) for c in col5_split.output_columns])
 
+    with pytest.raises(ValueError):
+        # should fail bc multiple columns in input_columns
+        OTMColumn(
+            input_columns=[col5, col5],
+            output_columns=[col5_a, col5_b],
+            column_transform=split_on_colon,)
+
 
 @pytest.mark.otmc
 def test_OTMColumn_results(col5_split, OTMColumn_df, otmcolumn_valid_values):
