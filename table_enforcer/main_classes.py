@@ -2,8 +2,6 @@
 """Main module."""
 import typing as t
 
-from collections import OrderedDict
-
 import pandas as pd
 
 from box import Box
@@ -14,7 +12,7 @@ __all__ = [
     "Enforcer",
     "BaseColumn",
     "Column",
-    "OTMColumn",
+    "CompoundColumn",
 ]
 
 VALIDATOR_FUNCTION = t.Callable[[pd.Series], pd.DataFrame]
@@ -72,7 +70,10 @@ class Enforcer(object):
 
 
 class BaseColumn(object):
-    """Base Class for Columns."""
+    """Base Class for Columns.
+
+    Lays out essential methods api.
+    """
 
     def update_dataframe(self, df, table, validate=False):
         """Perform ``self.recode`` and add resulting column(s) to ``df`` and return ``df``."""
@@ -93,10 +94,12 @@ class BaseColumn(object):
 
 
 class Column(BaseColumn):
-    """Class representing a simple table column."""
+    """Class representing a single table column."""
 
-    def __init__(self, name: str, dtype: type, unique: bool, validators: t.List[VALIDATOR_FUNCTION],
-                 recoders: t.List[RECODER_FUNCTION]) -> None:
+    def __init__(
+            self, name: str, dtype: type, unique: bool, validators: t.List[VALIDATOR_FUNCTION],
+            recoders: t.List[RECODER_FUNCTION]
+    ) -> None:
         """Construct a new `Column` object."""
         if validators is None:
             validators = []
@@ -176,17 +179,16 @@ class Column(BaseColumn):
         return data.to_frame()
 
 
-class ComplexColumn(BaseColumn):
+class CompoundColumn(BaseColumn):
     """Class representing multiple columns and the logic governing their transformation from source table to recoded table."""
 
     def __init__(
             self,
             input_columns: t.List[Column],
             output_columns: t.List[Column],
-            column_transform,) -> None:
-        """Construct a new ``ComplexColumn`` object.
-
-        Intended to be used as Base Class.
+            column_transform,
+    ) -> None:
+        """Construct a new ``CompoundColumn`` object.
 
         Args:
             input_columns (list, Column): A list of ``Column`` objects representing column(s) from the SOURCE table.
@@ -196,43 +198,6 @@ class ComplexColumn(BaseColumn):
         self.input_columns = input_columns
         self.output_columns = output_columns
         self.column_transform = column_transform
-
-    def _validate_input(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
-        raise NotImplementedError("This method must be defined for each subclass.")
-
-    def _validate_output(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
-        raise NotImplementedError("This method must be defined for each subclass.")
-
-    def recode_input(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
-        raise NotImplementedError("This method must be defined for each subclass.")
-
-    def recode_output(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
-        raise NotImplementedError("This method must be defined for each subclass.")
-
-
-class OTMColumn(ComplexColumn):
-    """Class representing a set of table columns derived from spliting up a single parent column."""
-
-    def __init__(
-            self,
-            input_columns: t.List[Column],
-            output_columns: t.List[Column],
-            column_transform,) -> None:
-        """Construct a new ``OTMColumn`` object.
-
-        This class enables splitting a single input column into multiple output columns
-        based on logic defined in the provided ``column_transform``.
-
-        Args:
-            input_columns (list, Column): A list of ``Column`` objects representing column(s) from the SOURCE table.
-            output_columns (list, Column): A list of ``Column`` objects representing column(s) from the FINAL table.
-            column_transform (Callable): Function accepting the table object, performing transformations to it and returning a DataFrame containing the NEW columns only.
-
-        """
-        super().__init__(input_columns=input_columns, output_columns=output_columns, column_transform=column_transform)
-
-        if len(input_columns) != 1:
-            raise ValueError("OTMColumn.input_columns must be a list of length 1.")
 
     def _do_validation_set(self, table: pd.DataFrame, columns, validation_type, failed_only=False) -> pd.DataFrame:
         """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
@@ -255,7 +220,8 @@ class OTMColumn(ComplexColumn):
             table=table,
             columns=self.input_columns,
             validation_type="input",
-            failed_only=failed_only,)
+            failed_only=failed_only,
+        )
 
     def _recode_set(self, table: pd.DataFrame, columns, validate=False) -> pd.DataFrame:
         recoded_columns = []
@@ -275,7 +241,8 @@ class OTMColumn(ComplexColumn):
             table=transformed_columns,
             columns=self.output_columns,
             validation_type="output",
-            failed_only=failed_only,)
+            failed_only=failed_only,
+        )
 
     def _recode_output(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         transformed_columns = self.column_transform(table)
@@ -283,10 +250,12 @@ class OTMColumn(ComplexColumn):
 
     def validate(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
         """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
-        return pd.concat([
-            self._validate_input(table, failed_only=failed_only),
-            self._validate_output(table, failed_only=failed_only),
-        ]).fillna(True)
+        return pd.concat(
+            [
+                self._validate_input(table, failed_only=failed_only),
+                self._validate_output(table, failed_only=failed_only),
+            ]
+        ).fillna(True)
 
     def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         """Pass the appropriate columns through each recoder function sequentially and return the final result.
