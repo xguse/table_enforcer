@@ -15,6 +15,10 @@ TABLE_PATH_1 = TEST_FILES / "demo_table.csv"
 TABLE_PATH_2 = TEST_FILES / "demo_table_bad.csv"
 
 
+def sort_columns(df):
+    return df.T.sort_index().T.sort_index()
+
+
 def length_is_one(series):
     return series.str.len() == 1
 
@@ -42,6 +46,11 @@ def standardize_sex(series):
         raise ValueError("standardize_sex expects input series to contain only UPPERCASE letters.")
     else:
         return series.apply(lambda x: mapper[x])
+
+
+@pytest.fixture()
+def demo_good_df():
+    return pd.read_csv(str(TEST_FILES / "demo_table.csv"))
 
 
 @pytest.fixture()
