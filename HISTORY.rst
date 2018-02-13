@@ -2,6 +2,27 @@
 History
 *******
 
+v0.4.0 / 2018-02-13
+===================
+
+  * Updated tests for CompoundColumn
+  * CompoundColumn absorbs MTO/OTM-subclasses
+  * updated tests/files/demo_table*.csv
+  * updated docs/demo_notebook
+  * OTMColumn.input_columns must be len == 1
+  * amended tests for new OTMColumn
+  * main_classes: rewrite OTMColumn and general reorg
+  * BaseColumn method defs now sets api for subclasses
+  * Enforcer.columns is now simple list
+  * setup.cfg: whitelist varname df
+  * main_classes: restruct base classes + ComplexColumn
+  * main_classes: col takes table
+  * test_column: col takes table
+  * add testing files for MTOColumn
+  * ignore LibreOffice lock files
+  * OTMColumn: improved __doc__
+  * update_dataframe: call sig now has `validate`
+
 v0.3.0 / 2018-02-07
 ===================
 
