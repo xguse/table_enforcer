@@ -2,6 +2,12 @@
 History
 *******
 
+v0.4.1 / 2018-02-14
+===================
+
+  * added readthedocs.yml
+  * Updated Usage_Demo and README
+
 v0.4.0 / 2018-02-13
 ===================
 
