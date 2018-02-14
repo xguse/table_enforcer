@@ -20,7 +20,7 @@ Table Enforcer
 Demo Usage
 ----------
 
-Have a look at this `Demo Notebook <_static/Usage_Demo.html>`_
+Have a look at this `Demo Notebook <http://table-enforcer.readthedocs.io/en/latest/_static/Usage_Demo.html>`_
 
 Description
 -----------
