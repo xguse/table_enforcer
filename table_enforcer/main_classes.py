@@ -59,7 +59,9 @@ class Enforcer(object):
     def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         """Return a fully recoded dataframe.
 
-        If `validate`: raise ValidationError if validation fails.
+        Args:
+            table (pd.DataFrame): A dataframe on which to apply recoding logic.
+            validate (bool): If ``True``, recoded table must pass validation tests.
         """
         df = pd.DataFrame(index=table.index)
 
@@ -82,13 +84,20 @@ class BaseColumn(object):
         return pd.concat([df, recoded_columns], axis=1)
 
     def validate(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
-        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators.
+
+        Args:
+            table (pd.DataFrame): A dataframe on which to apply validation logic.
+            failed_only (bool): If ``True``: return only the indexes that failed to validate.
+        """
         raise NotImplementedError("This method must be defined for each subclass.")
 
     def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         """Pass the appropriate columns through each recoder function sequentially and return the final result.
 
-        If `validate`: raise ValidationError if validation fails.
+        Args:
+            table (pd.DataFrame): A dataframe on which to apply recoding logic.
+            validate (bool): If ``True``, recoded table must pass validation tests.
         """
         raise NotImplementedError("This method must be defined for each subclass.")
 
@@ -97,10 +106,21 @@ class Column(BaseColumn):
     """Class representing a single table column."""
 
     def __init__(
-            self, name: str, dtype: type, unique: bool, validators: t.List[VALIDATOR_FUNCTION],
-            recoders: t.List[RECODER_FUNCTION]
-    ) -> None:
-        """Construct a new `Column` object."""
+            self,
+            name: str,
+            dtype: type,
+            unique: bool,
+            validators: t.List[VALIDATOR_FUNCTION],
+            recoders: t.List[RECODER_FUNCTION],) -> None:
+        """Construct a new `Column` object.
+
+        Args:
+            name (str): The exact name of the column in a ``pd.DataFrame``.
+            dtype (type): The type that each member of the recoded column must belong to.
+            unique (bool): Whether values are allowed to recur in this column.
+            validators (list): A list of validator functions.
+            recoders (list): A list of recoder functions.
+        """
         if validators is None:
             validators = []
         if recoders is None:
@@ -130,7 +150,12 @@ class Column(BaseColumn):
             raise ValueError(f"The name of provided series '{series.name}' does not match this column's name '{name}'.")
 
     def validate(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
-        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators.
+
+        Args:
+            table (pd.DataFrame): A dataframe on which to apply validation logic.
+            failed_only (bool): If ``True``: return only the indexes that failed to validate.
+        """
         series = table[self.name]
 
         self._check_series_name(series)
@@ -155,7 +180,9 @@ class Column(BaseColumn):
     def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         """Pass the provided series obj through each recoder function sequentially and return the final result.
 
-        If `validate`: raise ValidationError if validation fails.
+        Args:
+            table (pd.DataFrame): A dataframe on which to apply recoding logic.
+            validate (bool): If ``True``, recoded table must pass validation tests.
         """
         series = table[self.name]
 
@@ -186,8 +213,7 @@ class CompoundColumn(BaseColumn):
             self,
             input_columns: t.List[Column],
             output_columns: t.List[Column],
-            column_transform,
-    ) -> None:
+            column_transform,) -> None:
         """Construct a new ``CompoundColumn`` object.
 
         Args:
@@ -220,8 +246,7 @@ class CompoundColumn(BaseColumn):
             table=table,
             columns=self.input_columns,
             validation_type="input",
-            failed_only=failed_only,
-        )
+            failed_only=failed_only,)
 
     def _recode_set(self, table: pd.DataFrame, columns, validate=False) -> pd.DataFrame:
         recoded_columns = []
@@ -241,25 +266,29 @@ class CompoundColumn(BaseColumn):
             table=transformed_columns,
             columns=self.output_columns,
             validation_type="output",
-            failed_only=failed_only,
-        )
+            failed_only=failed_only,)
 
     def _recode_output(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         transformed_columns = self.column_transform(table)
         return self._recode_set(table=transformed_columns, columns=self.output_columns, validate=validate)
 
     def validate(self, table: pd.DataFrame, failed_only=False) -> pd.DataFrame:
-        """Return a dataframe of validation results for the appropriate series vs the vector of validators."""
-        return pd.concat(
-            [
-                self._validate_input(table, failed_only=failed_only),
-                self._validate_output(table, failed_only=failed_only),
-            ]
-        ).fillna(True)
+        """Return a dataframe of validation results for the appropriate series vs the vector of validators.
+
+        Args:
+            table (pd.DataFrame): A dataframe on which to apply validation logic.
+            failed_only (bool): If ``True``: return only the indexes that failed to validate.
+        """
+        return pd.concat([
+            self._validate_input(table, failed_only=failed_only),
+            self._validate_output(table, failed_only=failed_only),
+        ]).fillna(True)
 
     def recode(self, table: pd.DataFrame, validate=False) -> pd.DataFrame:
         """Pass the appropriate columns through each recoder function sequentially and return the final result.
 
-        If `validate`: raise ValidationError if validation fails.
+        Args:
+            table (pd.DataFrame): A dataframe on which to apply recoding logic.
+            validate (bool): If ``True``, recoded table must pass validation tests.
         """
         return self._recode_output(self._recode_input(table, validate=validate), validate=validate)
