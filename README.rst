@@ -25,13 +25,22 @@ Have a look at this `Demo Notebook <https://nbviewer.jupyter.org/github/xguse/ta
 Description
 -----------
 
-A python package to facilitate the iterative process of developing and using schema-like representations of DataFrames in pandas for recoding and validating instances of these data.
+A python package to facilitate the iterative process of developing and using schema-like representations of table data to recode and validate instances of these data stored in pandas DataFrames.
+This is a `fairly young` attempt to solve a recurrent problem many people have.
+So far I have looked at multiple solutions, but none really did it for me.
 
-This is a very young attempt at solving a recurrent problem many people have.  So far I have looked at multiple solutions, but none really did it for me.
+They either deal primarily with JSON encoded data or they only really solve the validation side of the problem and consider recoding to be a separate issue.
+They seem to assume that recoding and cleaning has already been done and all we care about is making sure the final product is sane.
 
-I need to load, recode, and validate tables all day everyday. Sometimes its simple; you can ``pandas.read_table()`` and all is good. But sometimes you have a 400 column long RedCap data dump that is complicated `af` and you need to develop your recoding logic through an iterative process.
+To me, this seems backwards.
 
-This is an attempt to apply a sort of "test driven development" approach to data cleaning.
+I need to load, recode, and validate tables all day, everyday.
+Sometimes its simple; I can ``pandas.read_table()`` and all is good.
+But sometimes I have a 700 column long RedCap data dump that is complicated af, and it `really` helps me to develop my recoding logic through an iterative process.
+For me it makes sense to couple the recoding process directly with the validation process:
+to write the "tests" for each column first, then add recoding logic in steps until the tests pass.
+
+So `Table Enforcer` is my attempt to apply a sort of "test driven development" workflow to data cleaning and validation.
 
 
 Basic Workflow
@@ -39,20 +48,18 @@ Basic Workflow
 
 #. For each column that you care about in your source table:
 
-        #. Define a ``Column`` object that represents the ideal state of your data by passing a list of small, independent, reusable validator functions and some descriptive information.
+   #. Define a ``Column`` object that represents the ideal state of your data by passing a list of small, independent, reusable validator functions and some descriptive information.
 
-        #. Use this object to validate the column data from your source table.
+   #. Use this object to validate the column data from your source table.
 
-                * It WILL fail.
+      * It will probably fail.
 
-        #. Add small, composable, reusable recoding functions to the column object and iterate until your validations pass.
+   #. Add small, composable, reusable recoding functions to the column object and iterate until your validations pass.
 
 #. Define an ``Enforcer`` object by passing it a list of your column representation objects.
 
 #. This enforcer can be used to recode or validate recoded tables of the same kind as your source table wherever your applications use that type of data.
 
-
-.. note:: Soon, I want to add more kinds of ``Column`` objects that implement one-to-many and many-to-one recoding logic as sometimes a column tries to do too much and should really be multiple columns as well as the reverse.
 
 
 Please take a look and offer thoughts/advice.
@@ -65,10 +72,10 @@ Please take a look and offer thoughts/advice.
 Features
 --------
 
-  * ``Enforcer`` and ``Column`` classes to define what columns should look like in a table.
-  * Small but growing cadre of built-in validator functions and decorators.
-  * Decorators for use in defining parameterized validators like ``between_4_and_60()``.
-  * Declaration syntax for ``Enforcer`` is loosely based on SqlAlchemy's `Table <http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table>`_ pattern.
+* ``Enforcer`` and ``Column`` classes to define what columns should look like in a table.
+* ``CompundColumn`` class that supports complex operations including "one-to-many" and "many-to-one" recoding logic as sometimes a column tries to do too much and should really be multiple columns as well as the reverse.
+* Growing cadre of built-in validator functions and decorators.
+* Decorators for use in defining parameterized validators like ``between_4_and_60()``.
 
 
 
