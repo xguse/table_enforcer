@@ -1,0 +1,16 @@
+## Build formats
+formats:
+    - pdf
+
+# requirements_file: requirements/docs.txt
+
+# conda:
+#     file: environment.yml
+
+build:
+    image: latest
+
+python:
+    version: 3.6
+    # setup_py_install: true
+    pip_install: true
