@@ -13,9 +13,9 @@ Table Enforcer
         :target: https://table-enforcer.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-..        .. image:: https://pyup.io/repos/github/xguse/table_enforcer/shield.svg
-        :target: https://pyup.io/repos/github/xguse/table_enforcer/
-        :alt: Updates
+.. image:: https://coveralls.io/repos/github/xguse/table_enforcer/badge.svg?branch=master
+        :target: https://coveralls.io/github/xguse/table_enforcer?branch=master
+
 
 Demo Usage
 ----------
