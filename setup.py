@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """The setup script."""
 
 from setuptools import setup, find_packages
@@ -38,14 +37,19 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
+requirements = filter_req_paths(
+    paths=[
+        Path("requirements.txt"),
+        Path("requirements.pip.txt"),
+    ],
+    func=is_pipable,)
 
-requirements = filter_req_paths(paths=[Path("requirements.txt"),
-                                       Path("requirements.pip.txt")],
-                                func=is_pipable)
-
-test_requirements = filter_req_paths(paths=[Path("requirements.dev.txt"),
-                                            Path("requirements.dev.pip.txt")],
-                                     func=is_pipable)
+test_requirements = filter_req_paths(
+    paths=[
+        Path("requirements.dev.txt"),
+        Path("requirements.dev.pip.txt"),
+    ],
+    func=is_pipable,)
 
 setup(
     name='table_enforcer',
@@ -55,7 +59,7 @@ setup(
     author="Gus Dunn",
     author_email='w.gus.dunn@gmail.com',
     url='https://github.com/xguse/table_enforcer',
-    packages=find_packages(include=['table_enforcer']),
+    packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
@@ -70,5 +74,4 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     test_suite='tests',
-    tests_require=test_requirements,
-)
+    tests_require=test_requirements,)
