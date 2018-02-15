@@ -2,6 +2,12 @@
 History
 *******
 
+v0.4.3 / 2018-02-15
+==================
+
+  * Fixed import errors
+  * ignore test_chamber
+
 v0.4.2 / 2018-02-15
 ===================
 
