@@ -2,6 +2,15 @@
 History
 *******
 
+v0.4.2 / 2018-02-15
+===================
+
+  * Address import errors when not installed editable
+  * update README link to Usage_Demo
+  * ship docs/_static/Usage_Demo.html
+  * Updated Usage_Demo
+  * added to doctrings in main_classes
+
 v0.4.1 / 2018-02-14
 ===================
 
