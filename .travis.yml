@@ -21,10 +21,12 @@ deploy:
     python: 3.6
     repo: xguse/table_enforcer
     tags: true
-install: pip install -U tox-travis
+install:
+  - pip install -U tox-travis
+  - pip install coveralls
 language: python
 python:
-- 3.6
+  - 3.6
 script: tox
 after_success:
   - coveralls
