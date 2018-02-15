@@ -2,6 +2,12 @@
 History
 *******
 
+v0.4.4 / 2018-02-15
+===================
+
+  * fix recode/validate access to sub-pkgs
+  * ignore .pytest_cache
+
 v0.4.3 / 2018-02-15
 ==================
 
