@@ -6,7 +6,7 @@ import pandas as pd
 
 from box import Box
 from table_enforcer.errors import ValidationError, RecodingError
-from table_enforcer import validate as v
+from .utils import validate as v
 
 __all__ = [
     "Enforcer",
