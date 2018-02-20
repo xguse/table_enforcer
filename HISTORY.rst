@@ -9,7 +9,7 @@ v0.4.4 / 2018-02-15
   * ignore .pytest_cache
 
 v0.4.3 / 2018-02-15
-==================
+===================
 
   * Fixed import errors
   * ignore test_chamber
