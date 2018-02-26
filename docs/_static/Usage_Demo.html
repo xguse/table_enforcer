@@ -8451,15 +8451,15 @@ label {
 }
 /* Flexible box model classes */
 /* Taken from Alex Russell http://infrequently.org/2009/08/css-3-progress/ */
-/* This file is a compatability layer.  It allows the usage of flexible box 
+/* This file is a compatability layer.  It allows the usage of flexible box
 model layouts accross multiple browsers, including older browsers.  The newest,
 universal implementation of the flexible box model is used when available (see
-`Modern browsers` comments below).  Browsers that are known to implement this 
+`Modern browsers` comments below).  Browsers that are known to implement this
 new spec completely include:
 
     Firefox 28.0+
     Chrome 29.0+
-    Internet Explorer 11+ 
+    Internet Explorer 11+
     Opera 17.0+
 
 Browsers not listed, including Safari, are supported via the styling under the
@@ -11233,7 +11233,7 @@ div#pager .ui-resizable-handle {
   background: #f7f7f7;
   border-top: 1px solid #cfcfcf;
   border-bottom: 1px solid #cfcfcf;
-  /* This injects handle bars (a short, wide = symbol) for 
+  /* This injects handle bars (a short, wide = symbol) for
         the resize handle. */
 }
 div#pager .ui-resizable-handle::after {
@@ -11676,7 +11676,7 @@ ul.typeahead-list > li > a {
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
     </style>
 <style type="text/css">
-    
+
 /* Temporary definitions which will become obsolete with Notebook release 5.0 */
 .ansi-black-fg { color: #3E424D; }
 .ansi-black-bg { background-color: #3E424D; }
@@ -13719,14 +13719,14 @@ div#notebook {
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
@@ -13775,7 +13775,7 @@ $( document ).ready(function(){
              'toc_cell': false,          // useless here
              'toc_window_display': true, // display the toc window
              "toc_section_display": "block", // display toc contents in the window
-             'markTocItemOnScroll': false, 
+             'markTocItemOnScroll': false,
              'sideBar':true,             // sidebar or floating window
              'navigate_menu':false,       // navigation menu (only in liveNotebook -- do not change)
               title_cell: 'Table of Contents',
@@ -13788,6 +13788,9 @@ $( document ).ready(function(){
             });
     });
 </script>
+
+<meta name="google-site-verification" content="UMSSQ3t4ZaFvfV2pPxgvrrhu3Gz2pKnmB3Gq_Pb3XSI" />
+
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -15521,10 +15524,10 @@ as the reverse.</li>
 <span class="ansi-green-fg">----&gt; 3</span><span class="ansi-red-fg">     </span><span class="ansi-green-fg">return</span> enforcer<span class="ansi-blue-fg">.</span>recode<span class="ansi-blue-fg">(</span>df<span class="ansi-blue-fg">,</span> validate<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">True</span><span class="ansi-blue-fg">)</span>
 
 <span class="ansi-green-fg">~/src/repos/git/project-repos/table_enforcer/table_enforcer/main_classes.py</span> in <span class="ansi-cyan-fg">recode</span><span class="ansi-blue-fg">(self, table, validate)</span>
-<span class="ansi-green-intense-fg ansi-bold">     67</span> 
+<span class="ansi-green-intense-fg ansi-bold">     67</span>
 <span class="ansi-green-intense-fg ansi-bold">     68</span>         <span class="ansi-green-fg">for</span> column <span class="ansi-green-fg">in</span> self<span class="ansi-blue-fg">.</span>columns<span class="ansi-blue-fg">:</span>
 <span class="ansi-green-fg">---&gt; 69</span><span class="ansi-red-fg">             </span>df <span class="ansi-blue-fg">=</span> column<span class="ansi-blue-fg">.</span>update_dataframe<span class="ansi-blue-fg">(</span>df<span class="ansi-blue-fg">,</span> table<span class="ansi-blue-fg">=</span>table<span class="ansi-blue-fg">,</span> validate<span class="ansi-blue-fg">=</span>validate<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     70</span> 
+<span class="ansi-green-intense-fg ansi-bold">     70</span>
 <span class="ansi-green-intense-fg ansi-bold">     71</span>         <span class="ansi-green-fg">return</span> df
 
 <span class="ansi-green-fg">~/src/repos/git/project-repos/table_enforcer/table_enforcer/main_classes.py</span> in <span class="ansi-cyan-fg">update_dataframe</span><span class="ansi-blue-fg">(self, df, table, validate)</span>
@@ -15532,13 +15535,13 @@ as the reverse.</li>
 <span class="ansi-green-intense-fg ansi-bold">     82</span>         df <span class="ansi-blue-fg">=</span> df<span class="ansi-blue-fg">.</span>copy<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
 <span class="ansi-green-fg">---&gt; 83</span><span class="ansi-red-fg">         </span>recoded_columns <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>recode<span class="ansi-blue-fg">(</span>table<span class="ansi-blue-fg">=</span>table<span class="ansi-blue-fg">,</span> validate<span class="ansi-blue-fg">=</span>validate<span class="ansi-blue-fg">)</span>
 <span class="ansi-green-intense-fg ansi-bold">     84</span>         <span class="ansi-green-fg">return</span> pd<span class="ansi-blue-fg">.</span>concat<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">[</span>df<span class="ansi-blue-fg">,</span> recoded_columns<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     85</span> 
+<span class="ansi-green-intense-fg ansi-bold">     85</span>
 
 <span class="ansi-green-fg">~/src/repos/git/project-repos/table_enforcer/table_enforcer/main_classes.py</span> in <span class="ansi-cyan-fg">recode</span><span class="ansi-blue-fg">(self, table, validate)</span>
 <span class="ansi-green-intense-fg ansi-bold">    202</span>             failed_rows <span class="ansi-blue-fg">=</span> find_failed_rows<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">.</span>validate<span class="ansi-blue-fg">(</span>data<span class="ansi-blue-fg">.</span>to_frame<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
 <span class="ansi-green-intense-fg ansi-bold">    203</span>             <span class="ansi-green-fg">if</span> failed_rows<span class="ansi-blue-fg">.</span>shape<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">&gt;</span> <span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">:</span>
 <span class="ansi-green-fg">--&gt; 204</span><span class="ansi-red-fg">                 </span><span class="ansi-green-fg">raise</span> ValidationError<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">f&#34;Rows that failed to validate for column &#39;{self.name}&#39;:\n{failed_rows}&#34;</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    205</span> 
+<span class="ansi-green-intense-fg ansi-bold">    205</span>
 <span class="ansi-green-intense-fg ansi-bold">    206</span>         <span class="ansi-green-fg">return</span> data<span class="ansi-blue-fg">.</span>to_frame<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
 
 <span class="ansi-red-fg">ValidationError</span>: Rows that failed to validate for column &#39;col1&#39;:
@@ -15641,7 +15644,7 @@ as the reverse.</li>
 <span class="ansi-green-fg">~/.anaconda/envs/table_enforcer/lib/python3.6/site-packages/pandas/core/series.py</span> in <span class="ansi-cyan-fg">apply</span><span class="ansi-blue-fg">(self, func, convert_dtype, args, **kwds)</span>
 <span class="ansi-green-intense-fg ansi-bold">   2550</span>                 values <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>asobject
 <span class="ansi-green-fg">-&gt; 2551</span><span class="ansi-red-fg">                 </span>mapped <span class="ansi-blue-fg">=</span> lib<span class="ansi-blue-fg">.</span>map_infer<span class="ansi-blue-fg">(</span>values<span class="ansi-blue-fg">,</span> f<span class="ansi-blue-fg">,</span> convert<span class="ansi-blue-fg">=</span>convert_dtype<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   2552</span> 
+<span class="ansi-green-intense-fg ansi-bold">   2552</span>
 
 <span class="ansi-green-fg">pandas/_libs/src/inference.pyx</span> in <span class="ansi-cyan-fg">pandas._libs.lib.map_infer</span><span class="ansi-blue-fg">()</span>
 
@@ -15664,10 +15667,10 @@ During handling of the above exception, another exception occurred:
 <span class="ansi-green-fg">----&gt; 3</span><span class="ansi-red-fg">     </span><span class="ansi-green-fg">return</span> enforcer<span class="ansi-blue-fg">.</span>recode<span class="ansi-blue-fg">(</span>df<span class="ansi-blue-fg">,</span> validate<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">True</span><span class="ansi-blue-fg">)</span>
 
 <span class="ansi-green-fg">~/src/repos/git/project-repos/table_enforcer/table_enforcer/main_classes.py</span> in <span class="ansi-cyan-fg">recode</span><span class="ansi-blue-fg">(self, table, validate)</span>
-<span class="ansi-green-intense-fg ansi-bold">     67</span> 
+<span class="ansi-green-intense-fg ansi-bold">     67</span>
 <span class="ansi-green-intense-fg ansi-bold">     68</span>         <span class="ansi-green-fg">for</span> column <span class="ansi-green-fg">in</span> self<span class="ansi-blue-fg">.</span>columns<span class="ansi-blue-fg">:</span>
 <span class="ansi-green-fg">---&gt; 69</span><span class="ansi-red-fg">             </span>df <span class="ansi-blue-fg">=</span> column<span class="ansi-blue-fg">.</span>update_dataframe<span class="ansi-blue-fg">(</span>df<span class="ansi-blue-fg">,</span> table<span class="ansi-blue-fg">=</span>table<span class="ansi-blue-fg">,</span> validate<span class="ansi-blue-fg">=</span>validate<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     70</span> 
+<span class="ansi-green-intense-fg ansi-bold">     70</span>
 <span class="ansi-green-intense-fg ansi-bold">     71</span>         <span class="ansi-green-fg">return</span> df
 
 <span class="ansi-green-fg">~/src/repos/git/project-repos/table_enforcer/table_enforcer/main_classes.py</span> in <span class="ansi-cyan-fg">update_dataframe</span><span class="ansi-blue-fg">(self, df, table, validate)</span>
@@ -15675,13 +15678,13 @@ During handling of the above exception, another exception occurred:
 <span class="ansi-green-intense-fg ansi-bold">     82</span>         df <span class="ansi-blue-fg">=</span> df<span class="ansi-blue-fg">.</span>copy<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
 <span class="ansi-green-fg">---&gt; 83</span><span class="ansi-red-fg">         </span>recoded_columns <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>recode<span class="ansi-blue-fg">(</span>table<span class="ansi-blue-fg">=</span>table<span class="ansi-blue-fg">,</span> validate<span class="ansi-blue-fg">=</span>validate<span class="ansi-blue-fg">)</span>
 <span class="ansi-green-intense-fg ansi-bold">     84</span>         <span class="ansi-green-fg">return</span> pd<span class="ansi-blue-fg">.</span>concat<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">[</span>df<span class="ansi-blue-fg">,</span> recoded_columns<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     85</span> 
+<span class="ansi-green-intense-fg ansi-bold">     85</span>
 
 <span class="ansi-green-fg">~/src/repos/git/project-repos/table_enforcer/table_enforcer/main_classes.py</span> in <span class="ansi-cyan-fg">recode</span><span class="ansi-blue-fg">(self, table, validate)</span>
 <span class="ansi-green-intense-fg ansi-bold">    197</span>                 data <span class="ansi-blue-fg">=</span> recoder<span class="ansi-blue-fg">(</span>data<span class="ansi-blue-fg">)</span>
 <span class="ansi-green-intense-fg ansi-bold">    198</span>             <span class="ansi-green-fg">except</span> <span class="ansi-blue-fg">(</span>BaseException<span class="ansi-blue-fg">)</span> <span class="ansi-green-fg">as</span> err<span class="ansi-blue-fg">:</span>
 <span class="ansi-green-fg">--&gt; 199</span><span class="ansi-red-fg">                 </span><span class="ansi-green-fg">raise</span> RecodingError<span class="ansi-blue-fg">(</span>col<span class="ansi-blue-fg">,</span> recoder<span class="ansi-blue-fg">,</span> err<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    200</span> 
+<span class="ansi-green-intense-fg ansi-bold">    200</span>
 <span class="ansi-green-intense-fg ansi-bold">    201</span>         <span class="ansi-green-fg">if</span> validate<span class="ansi-blue-fg">:</span>
 
 <span class="ansi-red-fg">RecodingError</span>: Recoder &#39;standardize_sex&#39; raised the following error on column &#39;col4&#39;: KeyError(&#39;FEEMALE&#39;,).</pre>
@@ -15950,7 +15953,7 @@ During handling of the above exception, another exception occurred:
             input_columns (list, Column): A list of ``Column`` objects representing column(s) from the SOURCE table.
             output_columns (list, Column): A list of ``Column`` objects representing column(s) from the FINAL table.
             column_transform (Callable): Function accepting the table object, performing transformations to it and returning a DataFrame containing the NEW columns only.
-        
+
 </pre>
 </div>
 </div>
@@ -16138,7 +16141,7 @@ During handling of the above exception, another exception occurred:
     <span class="n">cols</span> <span class="o">=</span> <span class="n">Box</span><span class="p">()</span>
     <span class="n">cols</span><span class="o">.</span><span class="n">col5_number</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">col5</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">cols</span><span class="o">.</span><span class="n">col5_word</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">col5</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-    
+
     <span class="n">new_columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cols</span><span class="p">)[[</span><span class="s2">&quot;col5_number&quot;</span><span class="p">,</span> <span class="s2">&quot;col5_word&quot;</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">new_columns</span>
 
@@ -16590,12 +16593,12 @@ During handling of the above exception, another exception occurred:
 <span class="k">def</span> <span class="nf">is_subset</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ref_set</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_set</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
         <span class="n">valid</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ref_set</span><span class="p">)</span>
-        
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
         <span class="n">set_x</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">set_x</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
-        
+
     <span class="k">return</span> <span class="n">set_x</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">ref_set</span><span class="p">)</span>
 
 
@@ -16603,10 +16606,10 @@ During handling of the above exception, another exception occurred:
 <span class="k">def</span> <span class="nf">join_as_tuple</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="n">Box</span><span class="p">()</span>
     <span class="n">cols</span><span class="o">.</span><span class="n">col6_7_8</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;col6&quot;</span><span class="p">,</span> <span class="s2">&quot;col7&quot;</span><span class="p">,</span> <span class="s2">&quot;col8&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">col6</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">col7</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">col8</span><span class="p">,),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    
+
     <span class="n">new_columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">new_columns</span>
-    
+
 
 <span class="c1"># Validators</span>
 <span class="k">def</span> <span class="nf">col6_valid_values</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
@@ -16637,14 +16640,14 @@ During handling of the above exception, another exception occurred:
         <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;DNASeq&quot;</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">rcode</span><span class="p">)</span>
-    
+
 <span class="k">def</span> <span class="nf">translate_col7</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Recode 0-&gt; None; 1-&gt; &#39;Protein Function&#39; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">rcode</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Protein Function&quot;</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">rcode</span><span class="p">)</span>
-    
+
 <span class="k">def</span> <span class="nf">translate_col8</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Recode 0-&gt; None; 1-&gt; &#39;RNASeq&#39; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">rcode</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -17572,7 +17575,7 @@ During handling of the above exception, another exception occurred:
 <span class="n">validate_output</span>
 <span class="n">validate_output_json</span> <span class="o">=</span> <span class="n">validate_output</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;validate_output_json = &#39;&#39;&#39;</span><span class="si">{validate_output_json}</span><span class="s2">&#39;&#39;&#39;&quot;</span><span class="p">)</span>    
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;validate_output_json = &#39;&#39;&#39;</span><span class="si">{validate_output_json}</span><span class="s2">&#39;&#39;&#39;&quot;</span><span class="p">)</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">validate_output_json</span><span class="p">)</span>
 </pre></div>
 
@@ -17730,7 +17733,7 @@ During handling of the above exception, another exception occurred:
 <span class="n">validate_all</span>
 <span class="n">validate_all_json</span> <span class="o">=</span> <span class="n">validate_all</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;validate_all_json = &#39;&#39;&#39;</span><span class="si">{validate_all_json}</span><span class="s2">&#39;&#39;&#39;&quot;</span><span class="p">)</span>    
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;validate_all_json = &#39;&#39;&#39;</span><span class="si">{validate_all_json}</span><span class="s2">&#39;&#39;&#39;&quot;</span><span class="p">)</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">validate_all_json</span><span class="p">)</span>
 </pre></div>
 
@@ -18634,7 +18637,7 @@ During handling of the above exception, another exception occurred:
   </div>
 </body>
 
- 
+
 
 
 </html>
